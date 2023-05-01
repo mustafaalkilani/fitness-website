@@ -68,6 +68,38 @@ export const uploadFormToFirestore = async (weightCategory, forms) => {
   }
 };
 
+export const uploadFormExToFirestore = async (WherePlay, forms) => {
+  try {
+    let collectionName = "";
+    if (WherePlay === "Gym") {
+      collectionName = "Gym";
+    } else if (WherePlay === "WithoutGym") {
+      collectionName = "WithoutGym";
+    } 
+
+    const batch = [];
+
+    forms.slice(0, 7).forEach((form) => {
+      const docName = `day : ${form.weekName}`;
+      batch.push(setDoc(doc(db, collectionName, docName), {
+        exOne: form.exOne,
+        exTwo: form.exTwo,
+        exThree: form.exThree,
+        exFour: form.exFour,
+        exFive: form.exFive,
+        exSix: form.exSix,
+        exSeven: form.exSeven,
+      }));
+    });
+
+    await Promise.all(batch);
+    console.log("Documents written to collection ", collectionName);
+  } catch (e) {
+    console.error("Error adding documents: ", e);
+  }
+};
+
+
 // export const getAllDocs = async () => {
 //   const querySnapshot = await getDocs(collection(db, 'EatSchedule'));
 //   const docs = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
